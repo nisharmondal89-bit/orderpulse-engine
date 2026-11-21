@@ -17,7 +17,7 @@ def dispatch_order_webhook(self, order_id: str):
     total_cents=sum(i.quantity * i.unit_price_cents for i in order.items.all())
 
     start=time.perf_counter()
-    rep=requests.post(
+    resp=requests.post(
             "https://httpbin.org",
             json={"order_id": order_id, "email": order.customer_email, "total_cents": total_cents},
             )

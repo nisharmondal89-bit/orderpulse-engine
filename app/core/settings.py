@@ -11,11 +11,15 @@ ALLOWED_HOSTS=["*"]
 INSTALLED_APPS=[
         "django.contrib.contenttypes",
         "django.contrib.auth",
+        "django_prometheus",
         "rest_framework",
         "orders",
         ]
 
-MIDDLEWARE=["django.middleware.common.CommonMiddleware"]
+MIDDLEWARE=["django.middleware.common.CommonMiddleware",
+            "django_prometheus.middleware.PrometheusBeforeMiddleware",
+            "django_prometheus.middleware.PrometheusAfterMiddleware"
+            ]
 ROOT_URLCONF="core.urls"
 WSGI_APPLICATION="core.wsgi.application"
 
@@ -23,7 +27,7 @@ WSGI_APPLICATION="core.wsgi.application"
 db_url=urlparse(os.getenv("DATABASE_URL", "postgres://appuser:apppassword@localhost:5432/orderpulse"))
 DATABASES= {
         "default": {
-            "ENGINE": "django.db.backends.postgresql",
+            "ENGINE": "django_prometheus.db.backends.postgresql",
             "NAME": db_url.path[1:],
             "USER": db_url.username,
             "PASSWORD": db_url.password,

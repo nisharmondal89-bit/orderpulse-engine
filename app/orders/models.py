@@ -20,7 +20,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order=models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
     sku=models.CharField(max_length=64)
-    quantity=models.PositiveIntegarField()
+    quantity=models.PositiveIntegerField()
     unit_price_cents=models.PositiveIntegerField()
 
 

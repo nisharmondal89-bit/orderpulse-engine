@@ -16,5 +16,5 @@ def create_order(customer_email: str, items_data: list[dict]):
             for item in items_data
             ])
 
-        transaction.on_commit(lambda: dispatch_order_webhook,delay(str(order.id)))
+        transaction.on_commit(lambda: dispatch_order_webhook.delay(str(order.id)))
     return order

@@ -14,7 +14,7 @@ services:
 
   worker:
     build: .
-    command: celery -A core worker --loglevel-info
+    command: celery -A core worker --loglevel=info
     env_file: .env
     depends_on:
       postgres:
@@ -33,19 +33,42 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready" -U appuser -d orderpulse"]
+      test: ["CMD-SHELL", "pg_isready -U appuser -d orderpulse"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-    mongo:
+  mongo:
       image: mongo:7
       ports:
         - "27017:27017"
-    redis:
+  redis:
       image: redis:7-alpine
       ports:
         - "6379:6379"
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - web
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
 
 
 
